@@ -13,7 +13,7 @@ function distributeStockOrders(availableCash, models) {
     function distribute(cash, items, parentPercent = 100) {
         // Validate that percentages add up to 100 if parentPercent is not 0
         const totalPercent = items.reduce((sum, item) => sum + item.percent, 0);
-        if (parentPercent !== 0 && totalPercent !== 100 && totalPercent !== 0) {
+        if (parentPercent !== 0 && totalPercent > 100 && totalPercent !== 0) {
             throw new Error('Percentages do not add up to 100 in a model.');
         }
 
