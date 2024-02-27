@@ -1,16 +1,16 @@
 {
   "name": "alpaca-portfolio-manager",
   "version": "1.0.0",
-  "description": "",
+  "description": "Manage your Alpaca portfolio with ease, via cli",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "alpacaPortfolioManager": "./index.js"
+    "alpaca-portfolio-manager": "./index.js"
   },
-  "author": "",
+  "author": "Kumar Abhirup <hey@kumareth.com>",
   "license": "ISC",
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.0.1",
@@ -18,5 +18,9 @@
     "json5": "^2.2.3",
     "require-json5": "^1.3.0",
     "yargs": "^17.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kumarabhirup/alpaca-portfolio-manager.git"
   }
 }
