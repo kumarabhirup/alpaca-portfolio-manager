@@ -1,8 +1,20 @@
-require('dotenv').config()
+#!/usr/bin/env node
+
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
+
+const argv = yargs(hideBin(process.argv)).argv;
+
+// Load models and environment variables
+const modelsFile = argv.models || './models.json';
+const envFile = argv.env || '.env';
+
+require('dotenv').config({ path: envFile });
+
 const Alpaca = require('@alpacahq/alpaca-trade-api')
 const { distributeStockOrders, calculatePortfolioTodoActions, placeOrders } = require('./utils')
 const requireJSON5 = require('require-json5');
-const PORTFOLIO_MODELS = requireJSON5('./models.json')
+const PORTFOLIO_MODELS = requireJSON5(modelsFile)
 
 const MODELS = PORTFOLIO_MODELS.models
 const PAPER = !PORTFOLIO_MODELS.live
