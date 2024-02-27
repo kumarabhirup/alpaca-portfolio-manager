@@ -1,13 +1,13 @@
 require('dotenv').config()
 
-const PAPER = false
+const PAPER = true
 const ALPACA_KEY = PAPER ? process.env.PAPER_ALPACA_KEY : process.env.ALPACA_KEY
 const ALPACA_SECRET = PAPER ? process.env.PAPER_ALPACA_SECRET : process.env.ALPACA_SECRET
 const PORTFOLIO_MODELS = require('./models.json')
 const MODELS = PORTFOLIO_MODELS.models
 
 const Alpaca = require('@alpacahq/alpaca-trade-api')
-const { distributeStockOrders } = require('./utils')
+const { distributeStockOrders, calculatePortfolioTodoActions, placeOrders } = require('./utils')
 
 const alpaca = new Alpaca({
   keyId: ALPACA_KEY,
@@ -63,8 +63,44 @@ async function main() {
       }
     }))
 
-  const previewOrders = distributeStockOrders(account.cash, MODELS)
-  console.log('\n\nPreview Orders:', previewOrders)
+    // Distribute the available cash into the models
+    let ordersToPlace = [];
+    if (PORTFOLIO_MODELS.sellEnabled) {
+      // if sellEnabled is true, distribute the current portfolio value, and find out what needs to be sold.
+      const targetPortfolio = distributeStockOrders(parseFloat(account.portfolio_value), MODELS);
+      const { ordersToBuy, ordersToSell } = calculatePortfolioTodoActions(targetPortfolio, positions)
+
+      console.log('\nPreview Orders to Sell:', ordersToSell)
+      console.log('\nPreview Orders to Buy:', ordersToBuy)
+
+      ordersToPlace = [...ordersToSell, ...ordersToBuy]
+    } else {
+      // just distribute the available cash
+      ordersToPlace = distributeStockOrders(parseFloat(account.cash), MODELS);
+      console.log('\nPreview Orders to Buy:', ordersToPlace)
+    }
+
+    // Ask Y or N to place the orders
+    const readline = require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    readline.question('\n\nDo you want to place these orders? (Y/N)', async answer => {
+      if (answer.toUpperCase() === 'Y') {
+        await placeOrders(ordersToPlace, alpaca);
+      }
+
+      readline.close();
+      return;
+    });
+
+    readline.on('close', () => {
+      console.log('\n\nOperation ended.');
+      return;
+    });
+
+    return;
 }
 
 main()
