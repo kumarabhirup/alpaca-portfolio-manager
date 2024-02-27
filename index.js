@@ -50,6 +50,7 @@ async function main() {
   const orders = await alpaca.getOrders({
     status: 'open'
   })
+  const openOrdersSymbols = orders.map(order => order.symbol)
   console.log('\n\nYour open orders:', positions.length)
   orders.length > 0 && 
     console.table(orders.map(order => {
@@ -68,7 +69,11 @@ async function main() {
     if (PORTFOLIO_MODELS.sellEnabled) {
       // if sellEnabled is true, distribute the current portfolio value, and find out what needs to be sold.
       const targetPortfolio = distributeStockOrders(parseFloat(account.portfolio_value), MODELS);
-      const { ordersToBuy, ordersToSell } = calculatePortfolioTodoActions(targetPortfolio, positions)
+      const previewOrders = calculatePortfolioTodoActions(targetPortfolio, positions)
+
+      // Remove the orders that are already placed (open orders) (match by symbol)
+      let ordersToSell = previewOrders.ordersToSell.filter(order => !openOrdersSymbols.includes(order.symbol))
+      let ordersToBuy = previewOrders.ordersToBuy.filter(order => !openOrdersSymbols.includes(order.symbol))
 
       console.log('\nPreview Orders to Sell:', ordersToSell)
       console.log('\nPreview Orders to Buy:', ordersToBuy)
@@ -77,6 +82,10 @@ async function main() {
     } else {
       // just distribute the available cash
       ordersToPlace = distributeStockOrders(parseFloat(account.cash), MODELS);
+
+      // Remove the orders that are already placed (open orders) (match by symbol)
+      ordersToPlace = ordersToPlace.filter(order => !openOrdersSymbols.includes(order.symbol))
+
       console.log('\nPreview Orders to Buy:', ordersToPlace)
     }
 

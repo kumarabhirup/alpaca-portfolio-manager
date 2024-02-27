@@ -56,7 +56,7 @@ function calculatePortfolioTodoActions(previewOrders, positions) {
     const currentPositions = new Map(positions.map(position => [position.symbol, parseFloat(position.market_value)]));
 
     // Determine orders to sell
-    const ordersToSell = [];
+    let ordersToSell = [];
     currentPositions.forEach((currentValue, symbol) => {
     const targetValue = previewOrders.find(order => order.symbol === symbol)?.amount || 0;
     if (currentValue > targetValue) {
@@ -68,9 +68,9 @@ function calculatePortfolioTodoActions(previewOrders, positions) {
     });
 
     // Determine orders to buy
-    const ordersToBuy = previewOrders.filter(order => {
-    const currentValue = currentPositions.get(order.symbol) || 0;
-    return order.amount > currentValue;
+    let ordersToBuy = previewOrders.filter(order => {
+        const currentValue = currentPositions.get(order.symbol) || 0;
+        return order.amount > currentValue;
     }).map(order => ({
         symbol: order.symbol,
         amount: order.amount - (currentPositions.get(order.symbol) || 0)
@@ -85,30 +85,50 @@ function calculatePortfolioTodoActions(previewOrders, positions) {
 async function placeOrders(orders, alpaca) {
     for (const order of orders) {
         const roundedAmount = Math.floor(Math.abs(order.amount) * 100) / 100;
-        if (order.amount < 0) {
-            // Selling stocks by dollar amount
-            console.log(`\n\nSelling $${roundedAmount} of ${order.symbol}...`);
+
+        const orderSide = order.amount < 0 ? 'sell' : 'buy';
+        console.log(`\n\n${orderSide === 'sell' ? 'Selling' : 'Buying'} $${roundedAmount} of ${order.symbol}...`);
+
+        const _order = await alpaca.createOrder({
+            symbol: order.symbol,
+            notional: roundedAmount,
+            side: orderSide,
+            type: 'market',
+            time_in_force: 'day'
+        }).then((order) => {
+            console.log('Order placed.');
+            return order;
+        })
+        .catch(err => {
+            console.log(err?.response?.data.message);
+            return err?.response?.data.message;
+        });
+
+        if (typeof _order === 'string' && _order.includes('is not fractionable')) {
+            console.log(`Placing a share quantity order instead...`);
+
+            // Calculate the share quantity based on the current price
+            const quote = await alpaca.getLatestQuote(order.symbol);
+            console.log({quote})
+            const askPrice = quote.AskPrice;
+            const shareQuantity = Math.floor(roundedAmount / askPrice);
+
+            console.log(`Buying ${shareQuantity} shares of ${order.symbol} for $${shareQuantity * askPrice}...`);
+
             await alpaca.createOrder({
                 symbol: order.symbol,
-                notional: roundedAmount,
-                side: 'sell',
+                qty: shareQuantity,
+                side: orderSide,
                 type: 'market',
-                time_in_force: 'gtc'
+                time_in_force: 'day'
             }).then((order) => {
                 console.log('Order placed.');
-            }).catch(err => console.log(err.message));
-        } else if (order.amount > 0) {
-            // Buying stocks by dollar amount
-            console.log(`\n\nBuying $${roundedAmount} of ${order.symbol}...`);
-            await alpaca.createOrder({
-                symbol: order.symbol,
-                notional: roundedAmount,
-                side: 'buy',
-                type: 'market',
-                time_in_force: 'gtc'
-            }).then((order) => {
-                console.log('Order placed.');
-            }).catch(err => console.log(err.message));
+                return order;
+            })
+            .catch(err => {
+                console.log(err?.response?.data.message);
+                return err?.response?.data.message;
+            });
         }
     }
 }

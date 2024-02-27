@@ -1,9 +1,9 @@
 {
-  "sellEnabled": false,
+  "sellEnabled": true,
   "models": [
     {
       "symbol": "AAPL",
-      "percent": 20
+      "percent": 0
     },
     {
       "symbol": "Model::SPY-DOW-NASDAQ-BTCETF-STCE",
@@ -29,11 +29,11 @@
           "percent": 5
         }
       ],
-      "percent": 0
+      "percent": 50
     },
     {
       "symbol": "Model::SPY-DOW-NASDAQ-BTCETF-STCE",
-      "percent": 0
+      "percent": 50
     }
   ]
 }
