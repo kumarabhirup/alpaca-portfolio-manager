@@ -109,8 +109,7 @@ async function placeOrders(orders, alpaca) {
 
             // Calculate the share quantity based on the current price
             const quote = await alpaca.getLatestQuote(order.symbol);
-            console.log({quote})
-            const askPrice = quote.AskPrice;
+            const askPrice = quote.AskPrice || quote.BidPrice;
             const shareQuantity = Math.floor(roundedAmount / askPrice);
 
             console.log(`Buying ${shareQuantity} shares of ${order.symbol} for $${shareQuantity * askPrice}...`);

@@ -1,10 +1,10 @@
 require('dotenv').config()
 
-const PAPER = true
-const ALPACA_KEY = PAPER ? process.env.PAPER_ALPACA_KEY : process.env.ALPACA_KEY
-const ALPACA_SECRET = PAPER ? process.env.PAPER_ALPACA_SECRET : process.env.ALPACA_SECRET
 const PORTFOLIO_MODELS = require('./models.json')
 const MODELS = PORTFOLIO_MODELS.models
+const PAPER = !PORTFOLIO_MODELS.live
+const ALPACA_KEY = PAPER ? process.env.PAPER_ALPACA_KEY : process.env.ALPACA_KEY
+const ALPACA_SECRET = PAPER ? process.env.PAPER_ALPACA_SECRET : process.env.ALPACA_SECRET
 
 const Alpaca = require('@alpacahq/alpaca-trade-api')
 const { distributeStockOrders, calculatePortfolioTodoActions, placeOrders } = require('./utils')
