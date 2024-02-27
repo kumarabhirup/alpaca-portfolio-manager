@@ -2,6 +2,13 @@
 
 Alpaca Portfolio Manager is a Node.js Script designed to automate and optimize your investment strategy across various asset classes including indexes, cryptocurrencies, and treasuries. By leveraging the Alpaca API for live or paper trading, users can configure their portfolio according to predefined models or customize their own. The system supports dynamic allocation percentages for each asset, enabling a tailored investment approach that aligns with individual risk tolerance and financial goals. Whether you're looking to diversify your holdings or focus on specific sectors, Alpaca Portfolio Manager offers a flexible and nerdy platform to help you achieve your investment objectives.
 
+## Run using a simple command
+
+```bash
+npx alpaca-portfolio-manager --model models.json --env .env
+```
+
+### models.json
 ```jsonc
 {
   // Alpaca Live vs Paper Trading
@@ -58,3 +65,20 @@ Alpaca Portfolio Manager is a Node.js Script designed to automate and optimize y
   ]
 }
 ```
+
+### .env
+
+```
+ALPACA_KEY=AK***
+ALPACA_SECRET=***
+PAPER_ALPACA_KEY=PK***
+PAPER_ALPACA_SECRET=***
+```
+
+<br /><br />
+
+# License
+
+**MIT © [Kumar Abhirup](https://www.twitter.com/kumareth)**
+<br />
+_Follow me 👋 **on Twitter**_ → [![Twitter](https://img.shields.io/twitter/follow/kumareth.svg?style=social&label=@kumareth)](https://twitter.com/kumareth/)
