@@ -75,8 +75,6 @@ PAPER_ALPACA_KEY=PK***
 PAPER_ALPACA_SECRET=***
 ```
 
-<br /><br />
-
 # License
 
 **MIT © [Kumar Abhirup](https://www.twitter.com/kumareth)**
