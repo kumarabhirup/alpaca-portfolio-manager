@@ -1,13 +1,13 @@
 require('dotenv').config()
+const Alpaca = require('@alpacahq/alpaca-trade-api')
+const { distributeStockOrders, calculatePortfolioTodoActions, placeOrders } = require('./utils')
+const requireJSON5 = require('require-json5');
+const PORTFOLIO_MODELS = requireJSON5('./models.json')
 
-const PORTFOLIO_MODELS = require('./models.json')
 const MODELS = PORTFOLIO_MODELS.models
 const PAPER = !PORTFOLIO_MODELS.live
 const ALPACA_KEY = PAPER ? process.env.PAPER_ALPACA_KEY : process.env.ALPACA_KEY
 const ALPACA_SECRET = PAPER ? process.env.PAPER_ALPACA_SECRET : process.env.ALPACA_SECRET
-
-const Alpaca = require('@alpacahq/alpaca-trade-api')
-const { distributeStockOrders, calculatePortfolioTodoActions, placeOrders } = require('./utils')
 
 const alpaca = new Alpaca({
   keyId: ALPACA_KEY,
@@ -22,6 +22,7 @@ async function main() {
   console.log('Account Number:', account.account_number)
   console.log('Current Portfolio Value:', `$${account.portfolio_value}`)
   console.log('Available Cash:', `$${account.cash}`)
+  console.log('Available Buying Power:', `$${account.buying_power}`)
 
   const positions = await alpaca.getPositions()
   console.log('\n\nYour current positions:', positions.length)
@@ -81,7 +82,7 @@ async function main() {
       ordersToPlace = [...ordersToSell, ...ordersToBuy]
     } else {
       // just distribute the available cash
-      ordersToPlace = distributeStockOrders(parseFloat(account.cash), MODELS);
+      ordersToPlace = distributeStockOrders(parseFloat(account.buying_power), MODELS);
 
       // Remove the orders that are already placed (open orders) (match by symbol)
       ordersToPlace = ordersToPlace.filter(order => !openOrdersSymbols.includes(order.symbol))

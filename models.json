@@ -7,34 +7,34 @@
       "percent": 0
     },
     {
-      "symbol": "Model::SPY-DOW-NASDAQ-BTCETF-STCE",
+      "symbol": "Model::Indexes-Crypto-Treasuries::Q1:2024",
       "models": [
         {
-          "symbol": "DJIA",
-          "percent": 30
-        },
-        {
-          "symbol": "GBTC",
-          "percent": 10
-        },
-        {
-          "symbol": "QQQ",
+          "symbol": "DJIA", // DOW Jones Industrial Average
           "percent": 25
         },
         {
-          "symbol": "SPY",
+          "symbol": "GBTC", // Bitcoin ETF
+          "percent": 10
+        },
+        {
+          "symbol": "QQQ", // NASDAQ
+          "percent": 25
+        },
+        {
+          "symbol": "SPY", // S&P 500
           "percent": 30
         },
         {
-          "symbol": "STCE",
+          "symbol": "STCE", // Top Crypto ETF
+          "percent": 5
+        },
+        {
+          "symbol": "SCHO", // Short-Term Treasury ETF
           "percent": 5
         }
       ],
-      "percent": 50
-    },
-    {
-      "symbol": "Model::SPY-DOW-NASDAQ-BTCETF-STCE",
-      "percent": 50
+      "percent": 100
     }
   ]
 }
