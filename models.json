@@ -1,0 +1,35 @@
+{
+  "sellEnabled": true,
+  "models": [
+    {
+      "symbol": "Model::SPY-DOW-NASDAQ-BTCETF-STCE",
+      "models": [
+        {
+          "symbol": "DJIA",
+          "percent": 30
+        },
+        {
+          "symbol": "GBTC",
+          "percent": 10
+        },
+        {
+          "symbol": "QQQ",
+          "percent": 25
+        },
+        {
+          "symbol": "SPY",
+          "percent": 30
+        },
+        {
+          "symbol": "STCE",
+          "percent": 5
+        }
+      ],
+      "percent": 50
+    },
+    {
+      "symbol": "Model::SPY-DOW-NASDAQ-BTCETF-STCE",
+      "percent": 50
+    }
+  ]
+}
